@@ -1,0 +1,87 @@
+table Orders
+	lineageTag: a3356fdf-cb08-4720-b36f-5c391dba33b9
+
+	column orderID
+		dataType: int64
+		formatString: 0
+		lineageTag: 8ffaaae2-3788-49fb-aad9-3befd87e3d33
+		summarizeBy: none
+		sourceColumn: orderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column customerID
+		dataType: string
+		lineageTag: ff07c75f-40a5-48a0-8b63-8b758f44bc8c
+		summarizeBy: none
+		sourceColumn: customerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column employeeID
+		dataType: int64
+		formatString: 0
+		lineageTag: 3ae0f1a4-ef64-4645-a0fa-4d50e5778cc3
+		summarizeBy: none
+		sourceColumn: employeeID
+
+		annotation SummarizationSetBy = Automatic
+
+	column orderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 936993ac-ea5b-4bda-8f79-a397ab5424dd
+		summarizeBy: none
+		sourceColumn: orderDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column requiredDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 73c89d10-e267-4941-9e70-c61bbc39ffea
+		summarizeBy: none
+		sourceColumn: requiredDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column shippedDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: a965287e-c979-4437-9cfd-be9631c8a970
+		summarizeBy: none
+		sourceColumn: shippedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column shipperID
+		dataType: int64
+		formatString: 0
+		lineageTag: 2e2ffee4-1e83-41f5-877a-49c755d72ba4
+		summarizeBy: none
+		sourceColumn: shipperID
+
+		annotation SummarizationSetBy = Automatic
+
+	column freight
+		dataType: double
+		formatString: #,0.00
+		lineageTag: da6b54cf-6863-485f-a858-0e2e9d1887e1
+		summarizeBy: sum
+		sourceColumn: freight
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Orders = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Harini Pravin\Desktop\powerbi_proj\orders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Blank Shipped To Null" = Table.ReplaceValue(#"Promoted Headers", "", null, Replacer.ReplaceValue, {"shippedDate"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Blank Shipped To Null", {{"orderID", Int64.Type}, {"customerID", type text}, {"employeeID", Int64.Type}, {"orderDate", type date}, {"requiredDate", type date}, {"shippedDate", type date}, {"shipperID", Int64.Type}, {"freight", type number}}, "en-US")
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

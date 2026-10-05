@@ -1,0 +1,215 @@
+table Products
+	lineageTag: eba8a87e-0ca9-4580-a110-f710ee10208c
+
+	measure 'Units In Stock' =
+			VAR v = SUM ( Products[UnitsInStock] )
+			RETURN IF ( v = 0, BLANK (), v )
+		formatString: #,0
+		lineageTag: ed9855ed-d129-4a58-bd3a-2cba04360e9a
+
+	measure 'Units On Order' =
+			VAR v = SUM ( Products[UnitsOnOrder] )
+			RETURN IF ( v = 0, BLANK (), v )
+		formatString: #,0
+		lineageTag: 192ba413-87fa-4aa8-828f-fb7e10f08978
+
+	measure 'Reorder Level' =
+			VAR v = SUM ( Products[ReorderLevel] )
+			RETURN IF ( v = 0, BLANK (), v )
+		formatString: #,0
+		lineageTag: e3526790-2eee-4de3-9522-89d7685babbb
+
+	measure 'Stock Status' =
+			VAR InStock = SUM ( Products[UnitsInStock] )
+			VAR Reorder = SUM ( Products[ReorderLevel] )
+			VAR InStockPlusOrdered = SUM ( Products[StockPlusOrdered] )
+			RETURN
+			    IF (
+			        HASONEVALUE ( Products[ProductID] ),
+			        SWITCH (
+			            TRUE (),
+			            InStock = 0 && InStockPlusOrdered = 0, "Out of stock",
+			            InStock = 0, "Out of stock (on order)",
+			            InStockPlusOrdered < Reorder, "Reorder needed",
+			            InStock < Reorder, "Below reorder level (on order)",
+			            "OK"
+			        )
+			    )
+		lineageTag: 0e1a46a2-6f6f-4687-b2d1-b5882ac2b63e
+
+	measure 'Details Title' = "Product Details: " & SELECTEDVALUE ( Products[ProductName], "Select a product" )
+		lineageTag: 5e8b3c7a-3b7c-44a6-871b-d2f8925dac56
+
+	column CategoryName
+		dataType: string
+		lineageTag: 04a97439-eeae-468d-a5e0-9045d3133663
+		summarizeBy: none
+		sourceColumn: CategoryName
+
+		annotation SummarizationSetBy = Automatic
+
+	column TotalStock
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4009fba7-cc0f-4af1-8111-275f71702153
+		summarizeBy: none
+		sourceColumn: TotalStock
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: int64
+		formatString: 0
+		lineageTag: 25d0fe07-f839-4df7-ade9-f6e6d2fd6782
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: 1dccc3a6-af4b-4846-9864-fef93af43e76
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoryID
+		dataType: int64
+		formatString: 0
+		lineageTag: 74db7a7d-5764-4451-98c1-90b4d75fc9b2
+		summarizeBy: none
+		sourceColumn: CategoryID
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPrice
+		dataType: double
+		formatString: #,0.00
+		lineageTag: c5043e39-a4aa-4ce6-a8ec-fc862dfecdd9
+		summarizeBy: none
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitsInStock
+		dataType: int64
+		formatString: #,0
+		lineageTag: 5bcbbe0f-3510-45b5-984f-40f7ea175bf2
+		summarizeBy: sum
+		sourceColumn: UnitsInStock
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitsOnOrder
+		dataType: int64
+		formatString: #,0
+		lineageTag: b57ba144-e807-4cdb-ac5b-cc68f8f435b1
+		summarizeBy: sum
+		sourceColumn: UnitsOnOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReorderLevel
+		dataType: int64
+		formatString: #,0
+		lineageTag: 27b4d9eb-50f1-4c5a-a0ff-6e920548c0e0
+		summarizeBy: sum
+		sourceColumn: ReorderLevel
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockPlusOrdered
+		dataType: int64
+		formatString: #,0
+		lineageTag: 796f81e6-140c-4b73-8671-02ebef69b0c6
+		summarizeBy: sum
+		sourceColumn: StockPlusOrdered
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockPlusOrderValue
+		dataType: double
+		formatString: #,0.00
+		lineageTag: c9552f3b-2e45-4638-8a0b-a00e5ea5bdd3
+		summarizeBy: sum
+		sourceColumn: StockPlusOrderValue
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Value'
+		dataType: double
+		lineageTag: ad7eacf3-0863-49f8-a3bb-7810f1b7c02d
+		summarizeBy: none
+		sourceColumn: Total Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CategoryStockRank
+		dataType: int64
+		formatString: 0
+		lineageTag: 11af4dfc-0d61-48df-8bf5-b09ff6449617
+		summarizeBy: none
+		sourceColumn: CategoryStockRank
+
+		annotation SummarizationSetBy = Automatic
+
+	column OverallStockRank
+		dataType: int64
+		formatString: 0
+		lineageTag: 047b4b0e-6211-4b48-a885-8ea90a5cf34e
+		summarizeBy: none
+		sourceColumn: OverallStockRank
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoryGroupedRank
+		dataType: int64
+		formatString: 0
+		lineageTag: a8457b34-8d40-4c11-a4a1-570e0e97a8d9
+		summarizeBy: none
+		sourceColumn: CategoryGroupedRank
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsBackordered
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: db0dfc28-8789-4d6a-a90a-b65603181017
+		summarizeBy: none
+		sourceColumn: IsBackordered
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Products-c70d7eff-5db1-48f9-8722-012ffc9fd3ce = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(Web.Contents("https://assets.datacamp.com/production/repositories/5976/datasets/685b6fbc4edc014c22877f3abb72242a93c20709/Northwind_products.csv")),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ProductID", Int64.Type}, {"ProductName", type text}, {"SupplierID", Int64.Type}, {"CategoryID", Int64.Type}, {"QuantityPerUnit", type text}, {"UnitPrice", type number}, {"UnitsInStock", Int64.Type}, {"UnitsOnOrder", Int64.Type}, {"ReorderLevel", Int64.Type}, {"Discontinued", type logical}, {"CategoryName", type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"ProductID", "ProductName", "CategoryID", "UnitPrice", "UnitsInStock", "UnitsOnOrder", "ReorderLevel", "CategoryName"}),
+				    #"Sorted Rows" = Table.Sort(#"Removed Other Columns",{{"UnitsInStock", Order.Descending}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Sorted Rows", "OverallStockRank", 1, 1, Int64.Type),
+				    #"Grouped Rows" = Table.Group(#"Added Index", {"CategoryName"}, {{"TotalStock", each List.Sum([UnitsInStock]), type nullable number}, {"Grouped", each _, type table [ProductID=number, ProductName=text, CategoryID=nullable number, UnitPrice=nullable number, UnitsInStock=nullable number, UnitsOnOrder=nullable number, ReorderLevel=nullable number, Discontinued=logical, CategoryName=text, Index=number]}}),
+				    #"Sorted Rows1" = Table.Sort(#"Grouped Rows",{{"TotalStock", Order.Descending}}),
+				    #"Added Index1" = Table.AddIndexColumn(#"Sorted Rows1", "Index", 1, 1, Int64.Type),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Added Index1",{{"Index", "CategoryStockRank"}}),
+				    #"Expanded Grouped" = Table.ExpandTableColumn(#"Renamed Columns1", "Grouped", {"ProductID", "ProductName", "CategoryID", "UnitPrice", "UnitsInStock", "UnitsOnOrder", "ReorderLevel", "OverallStockRank"}, {"ProductID", "ProductName", "CategoryID", "UnitPrice", "UnitsInStock", "UnitsOnOrder", "ReorderLevel" , "OverallStockRank"}),
+				    #"Added Custom" = Table.AddColumn(#"Expanded Grouped", "StockPlusOrdered", each [UnitsInStock] + [UnitsOnOrder]),
+				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "StockPlusOrderValue", each [StockPlusOrdered] * [UnitPrice]),
+				    #"Added Conditional Column" = Table.AddColumn(#"Added Custom1", "IsBackordered", each if [StockPlusOrdered] < [ReorderLevel] and [CategoryStockRank] = 1 then true else false),
+				    #"Grouped Rows1" = Table.Group(#"Added Conditional Column", {"CategoryName"}, {{"Total Value", each List.Sum([StockPlusOrderValue]), type number}, {"Grouped", each _, type table [CategoryName=text, TotalStock=nullable number, ProductID=nullable number, ProductName=nullable text, CategoryID=nullable number, UnitPrice=nullable number, UnitsInStock=nullable number, UnitsOnOrder=nullable number, ReorderLevel=nullable number, CategoryStockRank=number, StockPlusOrdered=number, StockPlusOrderValue=number, Backordered=logical]}}),
+				    #"Added Custom2" = Table.AddColumn(#"Grouped Rows1", "GroupedRank", each Table.AddIndexColumn(Table.Sort([Grouped],{{"StockPlusOrderValue",Order.Descending}}),"CategoryGroupedRank",1)),
+				    #"Expanded CategoryValueGroupedRank" = Table.ExpandTableColumn(#"Added Custom2", "GroupedRank", {"TotalStock", "ProductID", "ProductName", "CategoryID", "UnitPrice", "UnitsInStock", "UnitsOnOrder", "ReorderLevel", "OverallStockRank", "CategoryStockRank", "StockPlusOrdered", "StockPlusOrderValue", "IsBackordered", "CategoryGroupedRank"}, {"TotalStock", "ProductID", "ProductName", "CategoryID", "UnitPrice", "UnitsInStock", "UnitsOnOrder", "ReorderLevel", "OverallStockRank", "CategoryStockRank", "StockPlusOrdered", "StockPlusOrderValue", "IsBackordered", "CategoryGroupedRank"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Expanded CategoryValueGroupedRank",{"Grouped"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"TotalStock", Int64.Type}, {"ProductID", Int64.Type}, {"CategoryID", Int64.Type}, {"UnitPrice", type number}, {"UnitsInStock", Int64.Type}, {"UnitsOnOrder", Int64.Type}, {"ReorderLevel", Int64.Type}, {"StockPlusOrdered", Int64.Type}, {"StockPlusOrderValue", type number}, {"CategoryStockRank", Int64.Type}, {"OverallStockRank", Int64.Type}, {"CategoryGroupedRank", Int64.Type}, {"IsBackordered", type logical}})
+				in
+				    #"Changed Type1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

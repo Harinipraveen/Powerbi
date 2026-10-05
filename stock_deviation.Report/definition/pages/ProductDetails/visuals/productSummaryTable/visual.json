@@ -1,0 +1,67 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "productSummaryTable",
+  "position": {
+    "x": 20,
+    "y": 75,
+    "z": 2000,
+    "height": 140,
+    "width": 1240,
+    "tabOrder": 2
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "ProductID" } }, "queryRef": "Products.ProductID", "nativeQueryRef": "ProductID", "displayName": "Product ID" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "ProductName" } }, "queryRef": "Products.ProductName", "nativeQueryRef": "ProductName", "displayName": "Product" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "CategoryName" } }, "queryRef": "Products.CategoryName", "nativeQueryRef": "CategoryName", "displayName": "Category" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "UnitPrice" } }, "queryRef": "Products.UnitPrice", "nativeQueryRef": "UnitPrice", "displayName": "List Price" },
+            { "field": { "Aggregation": { "Expression": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "UnitsInStock" } }, "Function": 0 } }, "queryRef": "Sum(Products.UnitsInStock)", "nativeQueryRef": "In Stock", "displayName": "In Stock" },
+            { "field": { "Aggregation": { "Expression": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "UnitsOnOrder" } }, "Function": 0 } }, "queryRef": "Sum(Products.UnitsOnOrder)", "nativeQueryRef": "On Order", "displayName": "On Order" },
+            { "field": { "Aggregation": { "Expression": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "ReorderLevel" } }, "Function": 0 } }, "queryRef": "Sum(Products.ReorderLevel)", "nativeQueryRef": "Reorder Lvl", "displayName": "Reorder Lvl" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "Stock Status" } }, "queryRef": "Products.Stock Status", "nativeQueryRef": "Stock Status" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Revenue" } }, "queryRef": "Order Details.Revenue", "nativeQueryRef": "Revenue" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Revenue Rank" } }, "queryRef": "Order Details.Revenue Rank", "nativeQueryRef": "Revenue Rank" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Units Sold" } }, "queryRef": "Order Details.Units Sold", "nativeQueryRef": "Units Sold" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Order Count" } }, "queryRef": "Order Details.Order Count", "nativeQueryRef": "Orders", "displayName": "Orders" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Avg Selling Price" } }, "queryRef": "Order Details.Avg Selling Price", "nativeQueryRef": "Avg Selling Price" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Avg Discount %" } }, "queryRef": "Order Details.Avg Discount %", "nativeQueryRef": "Avg Discount" , "displayName": "Avg Discount" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Last Order Date" } }, "queryRef": "Order Details.Last Order Date", "nativeQueryRef": "Last Ordered", "displayName": "Last Ordered" }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": { "expr": { "Literal": { "Value": "true" } } },
+            "fontColor": { "solid": { "color": { "expr": { "Literal": { "Value": "'#FFFFFF'" } } } } },
+            "backColor": { "solid": { "color": { "expr": { "Literal": { "Value": "'#2E7D32'" } } } } }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": { "expr": { "Literal": { "Value": "false" } } }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": { "expr": { "Literal": { "Value": "true" } } },
+            "text": { "expr": { "Literal": { "Value": "'Product Summary'" } } }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,68 @@
+table Date
+	dataCategory: Time
+	lineageTag: bf5dfd65-510d-4b4a-8073-004b7554d100
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: 5a46cdf1-78dc-4920-9a95-bce2e85c7412
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 392e41ca-cbbc-428e-846a-07d102d8c951
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month No'
+		dataType: int64
+		formatString: 0
+		lineageTag: 46f8dbb2-e1b0-4d11-8109-69a98f63d397
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month No]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: string
+		lineageTag: 901e737d-9a34-4b22-91ef-268730f30a8f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: 'Month No'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month'
+		dataType: string
+		lineageTag: 61115fd4-161c-4618-8aac-b41ea2547d76
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date = calculated
+		mode: import
+		source =
+				ADDCOLUMNS (
+				    CALENDAR (
+				        DATE ( YEAR ( MIN ( Orders[orderDate] ) ), 1, 1 ),
+				        DATE ( YEAR ( MAX ( Orders[orderDate] ) ), 12, 31 )
+				    ),
+				    "Year", YEAR ( [Date] ),
+				    "Month No", MONTH ( [Date] ),
+				    "Month", FORMAT ( [Date], "MMM" ),
+				    "Year Month", FORMAT ( [Date], "yyyy-MM" )
+				)
+

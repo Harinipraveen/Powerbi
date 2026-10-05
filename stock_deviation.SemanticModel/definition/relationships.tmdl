@@ -1,0 +1,12 @@
+relationship 1ffb1a67-cb75-4880-ab9c-4913ac625cd5
+	fromColumn: 'Order Details'.orderID
+	toColumn: Orders.orderID
+
+relationship de2d2f2c-931e-4072-a576-e2382e24848a
+	fromColumn: 'Order Details'.productID
+	toColumn: Products.ProductID
+
+relationship 71234d8e-2732-48de-aaf5-01d815c82bdb
+	fromColumn: Orders.orderDate
+	toColumn: Date.Date
+

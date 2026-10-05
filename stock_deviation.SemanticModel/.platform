@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "stock_deviation"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "7e0e532e-0a33-417c-849d-4f2d4a0f0cbb"
+  }
+}

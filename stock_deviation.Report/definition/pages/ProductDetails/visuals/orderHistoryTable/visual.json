@@ -1,0 +1,67 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "orderHistoryTable",
+  "position": {
+    "x": 20,
+    "y": 225,
+    "z": 3000,
+    "height": 485,
+    "width": 1240,
+    "tabOrder": 3
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Orders" } }, "Property": "orderDate" } }, "queryRef": "Orders.orderDate", "nativeQueryRef": "Order Date", "displayName": "Order Date" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Orders" } }, "Property": "orderID" } }, "queryRef": "Orders.orderID", "nativeQueryRef": "Order ID", "displayName": "Order ID" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Orders" } }, "Property": "customerID" } }, "queryRef": "Orders.customerID", "nativeQueryRef": "Customer", "displayName": "Customer" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Orders" } }, "Property": "shippedDate" } }, "queryRef": "Orders.shippedDate", "nativeQueryRef": "Shipped Date", "displayName": "Shipped Date" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "unitPrice" } }, "queryRef": "Order Details.unitPrice", "nativeQueryRef": "Unit Price", "displayName": "Unit Price" },
+            { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "discount" } }, "queryRef": "Order Details.discount", "nativeQueryRef": "Discount", "displayName": "Discount" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Units Sold" } }, "queryRef": "Order Details.Units Sold", "nativeQueryRef": "Quantity", "displayName": "Quantity" },
+            { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Revenue" } }, "queryRef": "Order Details.Revenue", "nativeQueryRef": "Revenue" }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Orders" } }, "Property": "orderDate" } },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontColor": { "solid": { "color": { "expr": { "Literal": { "Value": "'#FFFFFF'" } } } } },
+            "backColor": { "solid": { "color": { "expr": { "Literal": { "Value": "'#2E7D32'" } } } } }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": { "expr": { "Literal": { "Value": "true" } } }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": { "expr": { "Literal": { "Value": "true" } } },
+            "text": { "expr": { "Literal": { "Value": "'Order History'" } } }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

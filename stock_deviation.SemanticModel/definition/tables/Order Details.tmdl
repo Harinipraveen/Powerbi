@@ -1,0 +1,119 @@
+table 'Order Details'
+	lineageTag: 0aa105c0-d00e-4a01-9731-857c36458891
+
+	measure Revenue = SUMX ( 'Order Details', 'Order Details'[quantity] * 'Order Details'[unitPrice] * ( 1 - 'Order Details'[discount] ) )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: e4f4196e-4a12-40ff-98bd-340ae6c4033b
+
+	measure 'Revenue PY' = CALCULATE ( [Revenue], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 36e47229-ccc4-45a6-a1cd-5870b3f4f141
+
+	measure 'YoY %' =
+			VAR FirstOrderDate = CALCULATE ( MIN ( Orders[orderDate] ), REMOVEFILTERS () )
+			VAR LastOrderDate = CALCULATE ( MAX ( Orders[orderDate] ), REMOVEFILTERS () )
+			VAR PeriodStart = MIN ( 'Date'[Date] )
+			VAR PeriodEnd = MAX ( 'Date'[Date] )
+			// Both the current period and the same period last year must be fully covered by the data
+			VAR IsCompletePeriod = EDATE ( PeriodStart, -12 ) >= FirstOrderDate && PeriodEnd <= LastOrderDate
+			VAR CurrentRevenue = [Revenue]
+			VAR PriorRevenue = [Revenue PY]
+			RETURN
+			    IF (
+			        IsCompletePeriod && NOT ISBLANK ( CurrentRevenue ) && NOT ISBLANK ( PriorRevenue ),
+			        DIVIDE ( CurrentRevenue - PriorRevenue, PriorRevenue )
+			    )
+		formatString: 0.0%
+		lineageTag: ab443c80-6e13-4e11-a160-5609078cdc89
+
+	measure 'Units Sold' = SUM ( 'Order Details'[quantity] )
+		formatString: #,0
+		lineageTag: 574e48c8-b222-43f2-b946-ea22cb9ab58a
+
+	measure 'Order Count' = DISTINCTCOUNT ( 'Order Details'[orderID] )
+		formatString: #,0
+		lineageTag: b400fa5f-0e24-40c6-96f5-c5c0bf78ed8a
+
+	/// Average price actually received per unit, after discounts
+	measure 'Avg Selling Price' = DIVIDE ( [Revenue], [Units Sold] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: d08edea5-0a6f-4a53-92d8-38f12e20886e
+
+	/// Discount weighted by order line value
+	measure 'Avg Discount %' =
+			DIVIDE (
+			    SUMX ( 'Order Details', 'Order Details'[quantity] * 'Order Details'[unitPrice] * 'Order Details'[discount] ),
+			    SUMX ( 'Order Details', 'Order Details'[quantity] * 'Order Details'[unitPrice] )
+			)
+		formatString: 0.0%
+		lineageTag: 78dbe1ca-8534-47cf-ac55-dcfd2b227661
+
+	measure 'Last Order Date' = MAXX ( 'Order Details', RELATED ( Orders[orderDate] ) )
+		formatString: yyyy-mm-dd
+		lineageTag: b8eda9c1-84d1-4578-a3e3-12f71fbcfb3b
+
+	measure 'Revenue Rank' =
+			IF (
+			    HASONEVALUE ( Products[ProductID] ),
+			    RANKX ( ALL ( Products ), [Revenue] )
+			)
+		formatString: 0
+		lineageTag: 9e121610-754b-4def-b6a7-f94a12367216
+
+	column orderID
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a6921df-60b8-495d-b393-12040d5f5119
+		summarizeBy: none
+		sourceColumn: orderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column productID
+		dataType: int64
+		formatString: 0
+		lineageTag: 991fbc01-27cb-4fd9-9692-c78baf1a4f1d
+		summarizeBy: none
+		sourceColumn: productID
+
+		annotation SummarizationSetBy = Automatic
+
+	column unitPrice
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 5c4e7d1c-3963-42e5-9d3d-f2ce1165d8f7
+		summarizeBy: none
+		sourceColumn: unitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity
+		dataType: int64
+		formatString: #,0
+		lineageTag: 5386d690-48ba-4ade-aace-713323aa0d80
+		summarizeBy: sum
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column discount
+		dataType: double
+		formatString: 0%
+		lineageTag: 7da5aa0f-8b99-4e62-af43-aae9f6e6738f
+		summarizeBy: none
+		sourceColumn: discount
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Order Details' = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Harini Pravin\Desktop\powerbi_proj\order_details.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"orderID", Int64.Type}, {"productID", Int64.Type}, {"unitPrice", type number}, {"quantity", Int64.Type}, {"discount", type number}}, "en-US")
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
