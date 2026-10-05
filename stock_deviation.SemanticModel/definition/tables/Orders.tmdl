@@ -76,7 +76,7 @@ table Orders
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("C:\Users\Harini Pravin\Desktop\powerbi_proj\orders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Source = Csv.Document(File.Contents(DataFolder & "orders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Blank Shipped To Null" = Table.ReplaceValue(#"Promoted Headers", "", null, Replacer.ReplaceValue, {"shippedDate"}),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Blank Shipped To Null", {{"orderID", Int64.Type}, {"customerID", type text}, {"employeeID", Int64.Type}, {"orderDate", type date}, {"requiredDate", type date}, {"shippedDate", type date}, {"shipperID", Int64.Type}, {"freight", type number}}, "en-US")

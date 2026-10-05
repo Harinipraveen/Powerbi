@@ -1,0 +1,6 @@
+/// Folder containing orders.csv and order_details.csv (must end with a backslash)
+expression DataFolder = "C:\project\powerbi_proj\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 6d4607c4-9d8c-4ae9-a890-36a4215b8f14
+
+	annotation PBI_ResultType = Text
+
