@@ -1,0 +1,30 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "categoryEffectBar",
+  "position": { "x": 20, "y": 235, "z": 4000, "height": 475, "width": 400, "tabOrder": 6 },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": { "projections": [
+          { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "CategoryName" } }, "queryRef": "Products.CategoryName", "nativeQueryRef": "Category", "displayName": "Category", "active": true }
+        ] },
+        "Y": { "projections": [
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "queryRef": "Margin Bridge.Bridge Value", "nativeQueryRef": "Effect", "displayName": "Effect" }
+        ] }
+      },
+      "sortDefinition": { "sort": [ { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "direction": "Descending" } ], "isDefaultSort": false }
+    },
+    "objects": {
+      "labels": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } } } } ],
+      "dataPoint": [ {
+        "properties": { "fill": { "solid": { "color": { "expr": { "FillRule": { "Input": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "FillRule": { "linearGradient3": { "min": { "color": { "Literal": { "Value": "'#C62828'" } } }, "mid": { "color": { "Literal": { "Value": "'#B0BEC5'" } }, "value": { "Literal": { "Value": "0D" } } }, "max": { "color": { "Literal": { "Value": "'#2E7D32'" } } }, "nullColoringStrategy": { "strategy": { "Literal": { "Value": "'asZero'" } } } } } } } } } } },
+        "selector": { "data": [ { "dataViewWildcard": { "matchingOption": 1 } } ] }
+      } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'Effect by category'" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

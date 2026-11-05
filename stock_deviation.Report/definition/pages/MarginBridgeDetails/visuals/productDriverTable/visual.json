@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "productDriverTable",
+  "position": { "x": 435, "y": 235, "z": 5000, "height": 475, "width": 825, "tabOrder": 7 },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": { "projections": [
+          { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "CategoryName" } }, "queryRef": "Products.CategoryName", "nativeQueryRef": "Category", "displayName": "Category" },
+          { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "ProductName" } }, "queryRef": "Products.ProductName", "nativeQueryRef": "Product", "displayName": "Product" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Units PQ" } }, "queryRef": "Order Details.Units PQ", "nativeQueryRef": "Units PQ", "displayName": "Units PQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Units CQ" } }, "queryRef": "Order Details.Units CQ", "nativeQueryRef": "Units CQ", "displayName": "Units CQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Mix Share PQ" } }, "queryRef": "Order Details.Mix Share PQ", "nativeQueryRef": "Mix PQ", "displayName": "Mix PQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Mix Share CQ" } }, "queryRef": "Order Details.Mix Share CQ", "nativeQueryRef": "Mix CQ", "displayName": "Mix CQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Avg Price PQ" } }, "queryRef": "Order Details.Avg Price PQ", "nativeQueryRef": "Net Price PQ", "displayName": "Net Price PQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Avg Price CQ" } }, "queryRef": "Order Details.Avg Price CQ", "nativeQueryRef": "Net Price CQ", "displayName": "Net Price CQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Unit Cost PQ" } }, "queryRef": "Order Details.Unit Cost PQ", "nativeQueryRef": "Unit Cost PQ", "displayName": "Unit Cost PQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Unit Cost CQ" } }, "queryRef": "Order Details.Unit Cost CQ", "nativeQueryRef": "Unit Cost CQ", "displayName": "Unit Cost CQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Unit Margin PQ" } }, "queryRef": "Order Details.Unit Margin PQ", "nativeQueryRef": "Unit Margin PQ", "displayName": "Unit Margin PQ" },
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "queryRef": "Margin Bridge.Bridge Value", "nativeQueryRef": "Effect", "displayName": "Effect" }
+        ] }
+      },
+      "sortDefinition": { "sort": [ { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "direction": "Ascending" } ], "isDefaultSort": false }
+    },
+    "objects": {
+      "columnHeaders": [ { "properties": { "fontColor": { "solid": { "color": { "expr": { "Literal": { "Value": "'#FFFFFF'" } } } } }, "backColor": { "solid": { "color": { "expr": { "Literal": { "Value": "'#2E7D32'" } } } } } } } ],
+      "total": [ { "properties": { "totals": { "expr": { "Literal": { "Value": "true" } } } } } ],
+      "values": [ {
+        "properties": { "fontColor": { "solid": { "color": { "expr": { "FillRule": { "Input": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "FillRule": { "linearGradient3": { "min": { "color": { "Literal": { "Value": "'#C62828'" } } }, "mid": { "color": { "Literal": { "Value": "'#37474F'" } }, "value": { "Literal": { "Value": "0D" } } }, "max": { "color": { "Literal": { "Value": "'#2E7D32'" } } }, "nullColoringStrategy": { "strategy": { "Literal": { "Value": "'asZero'" } } } } } } } } } } },
+        "selector": { "metadata": "Margin Bridge.Bridge Value" }
+      } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'Product drivers: previous quarter (PQ) vs current quarter (CQ), largest margin drag first'" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

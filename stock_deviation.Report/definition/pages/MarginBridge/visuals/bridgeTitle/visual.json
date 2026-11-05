@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "bridgeTitle",
+  "position": { "x": 20, "y": 10, "z": 1000, "height": 55, "width": 760, "tabOrder": 0 },
+  "visual": {
+    "visualType": "card",
+    "query": { "queryState": { "Values": { "projections": [
+      { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Margin Bridge Title" } }, "queryRef": "Margin Bridge.Margin Bridge Title", "nativeQueryRef": "Margin Bridge Title" }
+    ] } } },
+    "objects": {
+      "labels": [ { "properties": { "fontSize": { "expr": { "Literal": { "Value": "20D" } } }, "color": { "solid": { "color": { "expr": { "Literal": { "Value": "'#1B5E20'" } } } } } } } ],
+      "categoryLabels": [ { "properties": { "show": { "expr": { "Literal": { "Value": "false" } } } } } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "false" } } }, "text": { "expr": { "Literal": { "Value": "''" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

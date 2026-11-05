@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "stepTotalCard",
+  "position": { "x": 935, "y": 75, "z": 2000, "height": 90, "width": 325, "tabOrder": 3 },
+  "visual": {
+    "visualType": "card",
+    "query": { "queryState": { "Values": { "projections": [
+      { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "queryRef": "Margin Bridge.Bridge Value", "nativeQueryRef": "Bridge Value" }
+    ] } } },
+    "objects": {
+      "labels": [ { "properties": { "fontSize": { "expr": { "Literal": { "Value": "22D" } } }, "color": { "solid": { "color": { "expr": { "Literal": { "Value": "'#1565C0'" } } } } } } } ],
+      "categoryLabels": [ { "properties": { "show": { "expr": { "Literal": { "Value": "false" } } } } } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'Effect on Gross Margin'" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
