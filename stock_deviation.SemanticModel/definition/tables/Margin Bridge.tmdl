@@ -1,0 +1,135 @@
+/// Steps of the quarter-over-quarter gross margin bridge (previous quarter margin -> price, volume, mix, cost).
+/// Effects are computed product by product, so they add up correctly at product, category and total level:
+///   Volume_p = GM0_p * (TQ1 / TQ0 - 1)                 total units change at the previous product mix and unit margin
+///   Mix_p    = Q1_p * M0_p - GM0_p * TQ1 / TQ0           shift in product mix, valued at previous unit margin
+///   Price_p  = Q1_p * (P1_p - P0_p)                      change in net selling price (after discount)
+///   Cost_p   = -Q1_p * (C1_p - C0_p)                     change in unit cost (standard cost + allocated freight)
+/// Products sold in only one of the two quarters are fully attributed to Mix.
+/// Previous margin + Price + Volume + Mix + Cost = current quarter margin.
+table 'Margin Bridge'
+	lineageTag: 72e2e6a9-632f-47c7-b9fc-bff84f79f060
+
+	measure 'Price Effect' =
+			SUMX (
+			    VALUES ( Products[ProductID] ),
+			    VAR Q1 = [Units CQ]
+			    VAR Q0 = [Units PQ]
+			    RETURN
+			        IF ( Q1 > 0 && Q0 > 0, [Revenue CQ] - Q1 * DIVIDE ( [Revenue PQ], Q0 ) )
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 2b719ee7-ecff-43da-9c01-25fc1d120786
+
+	measure 'Volume Effect' =
+			VAR TQ1 = CALCULATE ( [Units CQ], REMOVEFILTERS ( Products ) )
+			VAR TQ0 = CALCULATE ( [Units PQ], REMOVEFILTERS ( Products ) )
+			RETURN
+			    IF ( TQ0 > 0, [Gross Margin PQ] * ( TQ1 / TQ0 - 1 ) )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 18aa020e-7afa-49d2-9588-9d151bcd1376
+
+	measure 'Mix Effect' =
+			VAR TQ1 = CALCULATE ( [Units CQ], REMOVEFILTERS ( Products ) )
+			VAR TQ0 = CALCULATE ( [Units PQ], REMOVEFILTERS ( Products ) )
+			VAR Growth = DIVIDE ( TQ1, TQ0 )
+			RETURN
+			    SUMX (
+			        VALUES ( Products[ProductID] ),
+			        VAR Q1 = [Units CQ]
+			        VAR Q0 = [Units PQ]
+			        VAR GM0 = [Gross Margin PQ]
+			        RETURN
+			            IF ( Q0 > 0, Q1 * DIVIDE ( GM0, Q0 ) - GM0 * Growth, [Gross Margin CQ] )
+			    )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 3acc611e-c50d-4f0d-a2d0-70b353a1e7c8
+
+	measure 'Cost Effect' =
+			SUMX (
+			    VALUES ( Products[ProductID] ),
+			    VAR Q1 = [Units CQ]
+			    VAR Q0 = [Units PQ]
+			    RETURN
+			        IF ( Q1 > 0 && Q0 > 0, - ( [Total Cost CQ] - Q1 * DIVIDE ( [Total Cost PQ], Q0 ) ) )
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: e5326925-44b2-44bd-b8f2-cf538a3acd11
+
+	/// Value of each bridge step; at total level it is the current quarter gross margin
+	measure 'Bridge Value' =
+			SUMX (
+			    VALUES ( 'Margin Bridge'[Step Order] ),
+			    SWITCH (
+			        'Margin Bridge'[Step Order],
+			        1, [Gross Margin PQ],
+			        2, [Price Effect],
+			        3, [Volume Effect],
+			        4, [Mix Effect],
+			        5, [Cost Effect]
+			    )
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 8357e6df-518b-4af6-9776-8003e7538743
+
+	/// Should be 0: price + volume + mix + cost minus the actual margin change
+	measure 'Bridge Reconciliation Gap' = [Price Effect] + [Volume Effect] + [Mix Effect] + [Cost Effect] - [Margin Change]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: f5149563-a2eb-4514-8748-ffca4abb9d1a
+
+	measure 'Margin Bridge Title' = "Gross Margin Bridge: " & [Previous Quarter Label] & " to " & [Current Quarter Label]
+		lineageTag: 70dd1430-42c7-446b-9e36-cdca7f0e7879
+
+	measure 'Bridge Detail Title' =
+			SELECTEDVALUE ( 'Margin Bridge'[Step], "All" ) & " effect on gross margin by product: "
+			    & [Previous Quarter Label] & " to " & [Current Quarter Label]
+		lineageTag: 0fb292ad-1ee0-447f-8237-df6f06471679
+
+	/// Explains how the selected step is calculated, shown on the drillthrough page
+	measure 'Bridge Step Explanation' =
+			SWITCH (
+			    SELECTEDVALUE ( 'Margin Bridge'[Step Order] ),
+			    1, "Starting point: gross margin earned in the previous quarter.",
+			    2, "Price: current units x (current avg net price - previous avg net price), per product. Includes discount changes.",
+			    3, "Volume: change in total units sold, valued at the previous quarter's product mix and unit margins.",
+			    4, "Mix: shift in sales toward higher or lower margin products, valued at previous unit margins. Products sold in only one quarter fall here.",
+			    5, "Cost: current units x (previous unit cost - current unit cost), per product. Unit cost = standard cost (list price x COGS %) + allocated freight.",
+			    "Select a bridge step."
+			)
+		lineageTag: 1c4da3e4-ca95-45bd-91d6-0a767166843f
+
+	column Step
+		dataType: string
+		lineageTag: 7e8a2c7c-8a1c-4294-8b02-52eb9859158e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Step]
+		sortByColumn: 'Step Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Step Order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8ae86e5f-4e41-4e6e-94c0-4cd92c5cea0b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Step Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Margin Bridge' = calculated
+		mode: import
+		source =
+				DATATABLE (
+				    "Step", STRING,
+				    "Step Order", INTEGER,
+				    {
+				        { "Previous Qtr Margin", 1 },
+				        { "Price", 2 },
+				        { "Volume", 3 },
+				        { "Mix", 4 },
+				        { "Cost", 5 }
+				    }
+				)
+

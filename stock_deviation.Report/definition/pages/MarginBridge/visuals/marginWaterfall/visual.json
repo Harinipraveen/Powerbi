@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "marginWaterfall",
+  "position": { "x": 20, "y": 200, "z": 4000, "height": 510, "width": 760, "tabOrder": 7 },
+  "visual": {
+    "visualType": "waterfallChart",
+    "query": {
+      "queryState": {
+        "Category": { "projections": [
+          { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Step" } }, "queryRef": "Margin Bridge.Step", "nativeQueryRef": "Step", "active": true },
+          { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "CategoryName" } }, "queryRef": "Products.CategoryName", "nativeQueryRef": "Category", "displayName": "Category" },
+          { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Products" } }, "Property": "ProductName" } }, "queryRef": "Products.ProductName", "nativeQueryRef": "Product", "displayName": "Product" }
+        ] },
+        "Y": { "projections": [
+          { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Value" } }, "queryRef": "Margin Bridge.Bridge Value", "nativeQueryRef": "Gross Margin", "displayName": "Gross Margin" }
+        ] }
+      },
+      "sortDefinition": {
+        "sort": [ { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Step" } }, "direction": "Ascending" } ],
+        "isDefaultSort": false
+      }
+    },
+    "objects": {
+      "labels": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "labelDisplayUnits": { "expr": { "Literal": { "Value": "1000D" } } }, "labelPrecision": { "expr": { "Literal": { "Value": "1L" } } } } } ],
+      "sentimentColors": [ { "properties": {
+        "increaseFill": { "solid": { "color": { "expr": { "Literal": { "Value": "'#2E7D32'" } } } } },
+        "decreaseFill": { "solid": { "color": { "expr": { "Literal": { "Value": "'#C62828'" } } } } },
+        "totalFill": { "solid": { "color": { "expr": { "Literal": { "Value": "'#1565C0'" } } } } }
+      } } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'Margin bridge, previous to current quarter. Click a bar in drill mode to break it down; right-click a bar and choose Drill through for product drivers'" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

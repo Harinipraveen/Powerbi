@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "gmChangeCard",
+  "position": { "x": 650, "y": 75, "z": 2000, "height": 110, "width": 300, "tabOrder": 5 },
+  "visual": {
+    "visualType": "card",
+    "query": { "queryState": { "Values": { "projections": [
+      { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Order Details" } }, "Property": "Margin Change" } }, "queryRef": "Order Details.Margin Change", "nativeQueryRef": "Margin Change" }
+    ] } } },
+    "objects": {
+      "labels": [ { "properties": { "fontSize": { "expr": { "Literal": { "Value": "22D" } } }, "color": { "solid": { "color": { "expr": { "Literal": { "Value": "'#1565C0'" } } } } } } } ],
+      "categoryLabels": [ { "properties": { "show": { "expr": { "Literal": { "Value": "false" } } } } } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'Margin Change (QoQ)'" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

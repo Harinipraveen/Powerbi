@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "cogsSlicer",
+  "position": { "x": 335, "y": 170, "z": 3000, "height": 55, "width": 300, "tabOrder": 5 },
+  "visual": {
+    "visualType": "slicer",
+    "query": { "queryState": { "Values": { "projections": [
+      { "field": { "Column": { "Expression": { "SourceRef": { "Entity": "COGS %" } }, "Property": "COGS %" } }, "queryRef": "COGS %.COGS %", "nativeQueryRef": "COGS %", "active": true }
+    ] } } },
+    "objects": {
+      "data": [ { "properties": { "mode": { "expr": { "Literal": { "Value": "'Dropdown'" } } } } } ],
+      "selection": [ { "properties": { "singleSelect": { "expr": { "Literal": { "Value": "true" } } } } } ],
+      "header": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'COGS % of List Price (default 60%)'" } } } } } ]
+    },
+    "syncGroup": { "groupName": "cogsSlicer", "fieldChanges": true, "filterChanges": true },
+    "drillFilterOtherVisuals": true
+  }
+}

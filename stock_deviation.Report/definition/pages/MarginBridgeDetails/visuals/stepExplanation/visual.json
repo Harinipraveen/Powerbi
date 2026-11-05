@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "stepExplanation",
+  "position": { "x": 20, "y": 75, "z": 1000, "height": 90, "width": 900, "tabOrder": 2 },
+  "visual": {
+    "visualType": "card",
+    "query": { "queryState": { "Values": { "projections": [
+      { "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Bridge Step Explanation" } }, "queryRef": "Margin Bridge.Bridge Step Explanation", "nativeQueryRef": "Bridge Step Explanation" }
+    ] } } },
+    "objects": {
+      "labels": [ { "properties": { "fontSize": { "expr": { "Literal": { "Value": "11D" } } }, "color": { "solid": { "color": { "expr": { "Literal": { "Value": "'#37474F'" } } } } } } } ],
+      "categoryLabels": [ { "properties": { "show": { "expr": { "Literal": { "Value": "false" } } } } } ]
+    },
+    "visualContainerObjects": {
+      "title": [ { "properties": { "show": { "expr": { "Literal": { "Value": "true" } } }, "text": { "expr": { "Literal": { "Value": "'How this effect is calculated'" } } } } } ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

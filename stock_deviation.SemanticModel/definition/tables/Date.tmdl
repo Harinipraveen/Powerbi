@@ -52,6 +52,37 @@ table Date
 
 		annotation SummarizationSetBy = Automatic
 
+	column Quarter
+		dataType: string
+		lineageTag: 5806db2f-38ae-4a75-9b21-b2e1afb8bcc5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Quarter'
+		dataType: string
+		lineageTag: 9a72844e-6246-4d43-9ce2-8b018bbc005d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year Quarter]
+		sortByColumn: 'Quarter Index'
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Sequential quarter number (Year * 4 + Quarter - 1); consecutive quarters differ by 1
+	column 'Quarter Index'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fd862b31-7d5f-49cd-bf7e-c1d9b54545d2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter Index]
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Date = calculated
 		mode: import
 		source =
@@ -63,6 +94,9 @@ table Date
 				    "Year", YEAR ( [Date] ),
 				    "Month No", MONTH ( [Date] ),
 				    "Month", FORMAT ( [Date], "MMM" ),
-				    "Year Month", FORMAT ( [Date], "yyyy-MM" )
+				    "Year Month", FORMAT ( [Date], "yyyy-MM" ),
+				    "Quarter", "Q" & QUARTER ( [Date] ),
+				    "Year Quarter", YEAR ( [Date] ) & "-Q" & QUARTER ( [Date] ),
+				    "Quarter Index", YEAR ( [Date] ) * 4 + QUARTER ( [Date] ) - 1
 				)
 

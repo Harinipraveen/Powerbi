@@ -17,6 +17,8 @@ ref table Products
 ref table Orders
 ref table 'Order Details'
 ref table Date
+ref table 'Margin Bridge'
+ref table 'COGS %'
 
 ref cultureInfo en-US
 

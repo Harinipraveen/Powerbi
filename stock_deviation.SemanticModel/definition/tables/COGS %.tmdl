@@ -1,0 +1,22 @@
+/// What-if parameter: standard product cost as a % of catalogue list price (no cost data exists in the source)
+table 'COGS %'
+	lineageTag: ad619bbd-ed2b-4399-a16c-ff42ea308b18
+
+	measure 'COGS % Value' = SELECTEDVALUE ( 'COGS %'[COGS %], 0.6 )
+		formatString: 0%
+		lineageTag: 0b484421-8574-49ec-bfe2-4407e7638794
+
+	column 'COGS %'
+		dataType: double
+		formatString: 0%
+		lineageTag: daa7c977-a330-4d41-ad90-9f95cdeaf2eb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [COGS %]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'COGS %' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( GENERATESERIES ( 30, 90, 5 ), "COGS %", [Value] / 100 )
+

@@ -60,6 +60,180 @@ table 'Order Details'
 		formatString: 0
 		lineageTag: 9e121610-754b-4def-b6a7-f94a12367216
 
+	/// Standard product cost: list price x the selected COGS % assumption.
+	/// The source data has no cost column, so this is a modelled cost.
+	measure 'Standard Cost' = SUMX ( 'Order Details', 'Order Details'[quantity] * 'Order Details'[List Price] ) * [COGS % Value]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin
+		lineageTag: 4fe20d3b-70c7-457e-a5ef-1f3ff394711c
+
+	/// Order freight allocated to order lines by gross line value
+	measure 'Freight Cost' = SUM ( 'Order Details'[Allocated Freight] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin
+		lineageTag: c6d14489-9f4d-48a5-a11b-33e2cbd67908
+
+	measure 'Total Cost' = [Standard Cost] + [Freight Cost]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin
+		lineageTag: bfbca327-c707-4a78-84b0-acbff22b4a8e
+
+	measure 'Gross Margin' = [Revenue] - [Total Cost]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin
+		lineageTag: 2d7873ad-bc74-433b-a480-47b70f28cbc7
+
+	measure 'Gross Margin %' = DIVIDE ( [Gross Margin], [Revenue] )
+		formatString: 0.0%
+		displayFolder: Margin
+		lineageTag: 48d629c3-a8ad-45ba-bdcf-5ce895a9d65f
+
+	measure 'Unit Cost' = DIVIDE ( [Total Cost], [Units Sold] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin
+		lineageTag: f73af224-6400-4d6d-91f6-4340a9a54d70
+
+	measure 'Unit Margin' = DIVIDE ( [Gross Margin], [Units Sold] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin
+		lineageTag: 57f44de3-ad50-4886-9452-a79e00070715
+
+	/// Quarter being analysed. A selected quarter wins, kept within the quarters that have orders and a
+	/// previous quarter to compare against; with no date selection it defaults to the latest complete quarter.
+	measure 'Current Quarter Index' =
+			VAR FirstOrder = CALCULATE ( MIN ( Orders[orderDate] ), REMOVEFILTERS () )
+			VAR LastOrder = CALCULATE ( MAX ( Orders[orderDate] ), REMOVEFILTERS () )
+			VAR FirstIdx = YEAR ( FirstOrder ) * 4 + QUARTER ( FirstOrder ) - 1
+			VAR LastIdx = YEAR ( LastOrder ) * 4 + QUARTER ( LastOrder ) - 1
+			VAR LastQuarterEnd = EOMONTH ( DATE ( YEAR ( LastOrder ), QUARTER ( LastOrder ) * 3, 1 ), 0 )
+			VAR LatestCompleteIdx = IF ( LastOrder >= LastQuarterEnd, LastIdx, LastIdx - 1 )
+			VAR SelectedIdx = MAX ( 'Date'[Quarter Index] )
+			RETURN
+			    IF (
+			        ISFILTERED ( 'Date' ) && NOT ISBLANK ( SelectedIdx ),
+			        MAX ( MIN ( SelectedIdx, LastIdx ), FirstIdx + 1 ),
+			        LatestCompleteIdx
+			    )
+		formatString: 0
+		isHidden
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: bd0e44f4-60a4-4dac-87e5-9cb175744469
+
+	measure 'Current Quarter Label' =
+			VAR Idx = [Current Quarter Index]
+			RETURN CALCULATE ( MIN ( 'Date'[Year Quarter] ), REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: d80dc178-07e2-4620-9dae-33e44010f231
+
+	measure 'Previous Quarter Label' =
+			VAR Idx = [Current Quarter Index] - 1
+			RETURN CALCULATE ( MIN ( 'Date'[Year Quarter] ), REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 6edfdcdc-9fa0-4936-b1c2-e3d3f2e2c3f2
+
+	measure 'Units CQ' =
+			VAR Idx = [Current Quarter Index]
+			RETURN CALCULATE ( [Units Sold], REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		formatString: #,0
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 9ff6f711-2b82-4de0-b82b-696009d46bed
+
+	measure 'Units PQ' =
+			VAR Idx = [Current Quarter Index] - 1
+			RETURN CALCULATE ( [Units Sold], REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		formatString: #,0
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 37528505-d174-47f3-82bf-abcc7d3a2a56
+
+	measure 'Revenue CQ' =
+			VAR Idx = [Current Quarter Index]
+			RETURN CALCULATE ( [Revenue], REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: dd810731-0c4b-45bc-b7f1-921924963d13
+
+	measure 'Revenue PQ' =
+			VAR Idx = [Current Quarter Index] - 1
+			RETURN CALCULATE ( [Revenue], REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 5b297479-df28-4ea6-8713-e6f8561972a4
+
+	measure 'Total Cost CQ' =
+			VAR Idx = [Current Quarter Index]
+			RETURN CALCULATE ( [Total Cost], REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 285cc5bf-e83f-4cec-8e01-c89af6e2dffb
+
+	measure 'Total Cost PQ' =
+			VAR Idx = [Current Quarter Index] - 1
+			RETURN CALCULATE ( [Total Cost], REMOVEFILTERS ( 'Date' ), 'Date'[Quarter Index] = Idx )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: c61b3718-33cf-473e-86f2-f121b3bd960b
+
+	measure 'Gross Margin CQ' = [Revenue CQ] - [Total Cost CQ]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: dd17138b-4fdc-4caa-a082-2965b3a8fa01
+
+	measure 'Gross Margin PQ' = [Revenue PQ] - [Total Cost PQ]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: d806c00c-39a3-4219-b33c-774b9cfc6ed0
+
+	measure 'Gross Margin % CQ' = DIVIDE ( [Gross Margin CQ], [Revenue CQ] )
+		formatString: 0.0%
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: a41a0012-e78e-4f3c-bd0b-9ece9adb7230
+
+	measure 'Gross Margin % PQ' = DIVIDE ( [Gross Margin PQ], [Revenue PQ] )
+		formatString: 0.0%
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: f7d9f175-07de-4de8-bd1e-caec335f0fa4
+
+	measure 'Margin Change' = [Gross Margin CQ] - [Gross Margin PQ]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 87587376-a3c5-4322-9e9c-162dbe3eeac9
+
+	measure 'Avg Price CQ' = DIVIDE ( [Revenue CQ], [Units CQ] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 0528dee7-d6c9-4f6f-ae3a-22c986a61147
+
+	measure 'Avg Price PQ' = DIVIDE ( [Revenue PQ], [Units PQ] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 73527742-6bb2-4bde-9e05-41bbcbc9ec81
+
+	measure 'Unit Cost CQ' = DIVIDE ( [Total Cost CQ], [Units CQ] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 70fea60f-755f-4538-ab63-62238d7c583b
+
+	measure 'Unit Cost PQ' = DIVIDE ( [Total Cost PQ], [Units PQ] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 74a0b4e7-452d-44bc-8664-65d41c373934
+
+	measure 'Unit Margin PQ' = DIVIDE ( [Gross Margin PQ], [Units PQ] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 73f72a84-2a56-480b-930f-976df784b6d7
+
+	/// Share of total units (across all products) in the current quarter
+	measure 'Mix Share CQ' = DIVIDE ( [Units CQ], CALCULATE ( [Units CQ], REMOVEFILTERS ( Products ) ) )
+		formatString: 0.00%
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: ce5536bb-6ddd-41a4-a280-a259113a22e9
+
+	measure 'Mix Share PQ' = DIVIDE ( [Units PQ], CALCULATE ( [Units PQ], REMOVEFILTERS ( Products ) ) )
+		formatString: 0.00%
+		displayFolder: Margin\Quarter Comparison
+		lineageTag: 75166de8-40ad-4126-bcdf-3601d9bf77c2
+
 	column orderID
 		dataType: int64
 		formatString: 0
@@ -102,6 +276,48 @@ table 'Order Details'
 		lineageTag: 7da5aa0f-8b99-4e62-af43-aae9f6e6738f
 		summarizeBy: none
 		sourceColumn: discount
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Order freight split across the order's lines in proportion to gross line value
+	column 'Allocated Freight' =
+			VAR ThisOrder = 'Order Details'[orderID]
+			VAR LineGross = 'Order Details'[quantity] * 'Order Details'[unitPrice]
+			// ALL over source columns only, so this column does not depend on other calculated columns
+			VAR OrderGross =
+			    SUMX (
+			        FILTER (
+			            ALL ( 'Order Details'[orderID], 'Order Details'[productID], 'Order Details'[quantity], 'Order Details'[unitPrice] ),
+			            'Order Details'[orderID] = ThisOrder
+			        ),
+			        'Order Details'[quantity] * 'Order Details'[unitPrice]
+			    )
+			RETURN DIVIDE ( LineGross, OrderGross ) * RELATED ( Orders[freight] )
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 94c84b3a-eb1f-4bcb-b557-8be8b7044185
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Catalogue list price used as the standard cost basis. Discontinued products are missing from the
+	/// Products source, so they fall back to the highest price they were ever sold at.
+	column 'List Price' =
+			VAR ThisProduct = 'Order Details'[productID]
+			RETURN
+			    COALESCE (
+			        RELATED ( Products[UnitPrice] ),
+			        MAXX (
+			            FILTER ( ALL ( 'Order Details'[productID], 'Order Details'[unitPrice] ), 'Order Details'[productID] = ThisProduct ),
+			            'Order Details'[unitPrice]
+			        )
+			    )
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 4a22128c-dd03-46c3-9577-f989956382e6
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 

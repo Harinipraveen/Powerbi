@@ -1,0 +1,31 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "MarginBridgeDetails",
+  "displayName": "Margin Bridge Details",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "drillBridgeStep",
+        "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Step" } },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      }
+    ]
+  },
+  "pageBinding": {
+    "name": "5e0c2a9b7d4f4e6a8c31",
+    "type": "Drillthrough",
+    "acceptsFilterContext": "Default",
+    "parameters": [
+      {
+        "name": "b7a1d3f09c2e4b5d8e64",
+        "boundFilter": "drillBridgeStep",
+        "fieldExpr": { "Column": { "Expression": { "SourceRef": { "Entity": "Margin Bridge" } }, "Property": "Step" } }
+      }
+    ]
+  },
+  "visibility": "HiddenInViewMode"
+}
